@@ -16,10 +16,25 @@ import UIKit
 public struct Photo: Identifiable, Equatable {
     public var id: String
     public var originalData: Data
+    public var imageCompressionQuality: Float
+    public var thumbnailCompressionQuality: Float
+    public var imageWidth: Int
+    public var thumbnailWidth: Int
     
-    public init(id: String = UUID().uuidString, originalData: Data) {
+    public init(
+        id: String = UUID().uuidString,
+        originalData: Data,
+        imageCompressionQuality: Float = 1.0,
+        thumbnailCompressionQuality: Float = 0.5,
+        imageWidth: Int = 800,
+        thumbnailWidth: Int = 100,
+    ) {
         self.id = id
         self.originalData = originalData
+        self.imageCompressionQuality = imageCompressionQuality
+        self.thumbnailCompressionQuality = thumbnailCompressionQuality
+        self.imageWidth = imageWidth
+        self.thumbnailWidth = thumbnailWidth
     }
 }
 
@@ -42,10 +57,14 @@ public struct AlertError {
 
 extension Photo {
     public var compressedData: Data? {
-        ImageResizer(targetWidth: 800).resize(data: originalData)?.jpegData(compressionQuality: 0.5)
+        ImageResizer(targetWidth: imageWidth)
+            .resize(data: originalData)?
+            .jpegData(compressionQuality: imageCompressionQuality)
     }
     public var thumbnailData: Data? {
-        ImageResizer(targetWidth: 100).resize(data: originalData)?.jpegData(compressionQuality: 0.5)
+        ImageResizer(targetWidth: thumbnailWidth)
+            .resize(data: originalData)?
+            .jpegData(compressionQuality: thumbnailCompressionQuality)
     }
     public var thumbnailImage: UIImage? {
         guard let data = thumbnailData else { return nil }
@@ -60,7 +79,7 @@ extension Photo {
 public class CameraService: NSObject, Identifiable {
     typealias PhotoCaptureSessionID = String
     
-    //    MARK: Observed Properties UI must react to
+    // MARK: Observed Properties UI must react to
     
     @Published public var flashMode: AVCaptureDevice.FlashMode = .off
     @Published public var shouldShowAlertView = false
@@ -71,11 +90,16 @@ public class CameraService: NSObject, Identifiable {
     @Published public var isCameraUnavailable = false
     @Published public var photo: Photo?
     
-    //    MARK: Alert properties
+    // MARK: Alert properties
     public var alertError: AlertError = AlertError()
     
-    // MARK: Session Management Properties
+    // MARK: Photo settings
+    public var imageCompressionQuality: Float = 0.5
+    public var thumbnailCompressionQuality: Float = 0.5
+    public var imageWidth: Int = 800
+    public var thumbnailWidth: Int = 100
     
+    // MARK: Session Management Properties
     public let session = AVCaptureSession()
     
     var isSessionRunning = false
