@@ -16,7 +16,7 @@ import UIKit
 public struct Photo: Identifiable, Equatable {
     public var id: String
     public var originalData: Data
-    public var orintation: UIImage.Orientation
+    public var orientation: UIImage.Orientation
     public var imageCompressionQuality: CGFloat
     public var thumbnailCompressionQuality: CGFloat
     public var imageWidth: CGFloat
@@ -29,7 +29,7 @@ public struct Photo: Identifiable, Equatable {
         thumbnailCompressionQuality: CGFloat = 0.5,
         imageWidth: CGFloat = 800,
         thumbnailWidth: CGFloat = 100,
-        orintation: UIImage.Orientation = UIImage.Orientation.up
+        orientation: UIImage.Orientation = UIImage.Orientation.up
     ) {
         self.id = id
         self.originalData = originalData
@@ -37,7 +37,7 @@ public struct Photo: Identifiable, Equatable {
         self.thumbnailCompressionQuality = thumbnailCompressionQuality
         self.imageWidth = imageWidth
         self.thumbnailWidth = thumbnailWidth
-        self.orintation = orintation
+        self.orientation = orientation
     }
 }
 
@@ -75,7 +75,8 @@ extension Photo {
     }
     public var image: UIImage? {
         guard let data = compressedData else { return nil }
-        return UIImage(data: data)
+        let img = UIImage(data: data)
+        return UIImage.init(cgImage: img?.cgImage, scale: img?.scale, orientation: orientation)
     }
 }
 
@@ -554,7 +555,7 @@ public class CameraService: NSObject, Identifiable {
                             thumbnailCompressionQuality: self.thumbnailCompressionQuality,
                             imageWidth: self.imageWidth,
                             thumbnailWidth: self.thumbnailWidth,
-                            orintation: photoCaptureProcessor.orientation
+                            orientation: photoCaptureProcessor.orientation
                         )
                         print("passing photo")
                     } else {
