@@ -74,9 +74,27 @@ extension PhotoCaptureProcessor: AVCapturePhotoCaptureDelegate {
         if let error = error {
             print("Error capturing photo: \(error)")
         } else {
+            
             if let nOrientation = photo.metadata[kCGImagePropertyOrientation as String] as? NSNumber {
-                if let orientation = UIImage.Orientation(rawValue: nOrientation.intValue) {
-                    self.orientation = orientation
+                if let propertyOrientation = CGImagePropertyOrientation.init(rawValue: nOrientation.uint32Value) {
+                    switch propertyOrientation {
+                    case .up:
+                        self.orientation = UIImage.Orientation.up
+                    case .right:
+                        self.orientation = UIImage.Orientation.right
+                    case .upMirrored:
+                        self.orientation = UIImage.Orientation.upMirrored
+                    case .down:
+                        self.orientation = UIImage.Orientation.down
+                    case .downMirrored:
+                        self.orientation = UIImage.Orientation.downMirrored
+                    case .leftMirrored:
+                        self.orientation = UIImage.Orientation.leftMirrored
+                    case .rightMirrored:
+                        self.orientation = UIImage.Orientation.rightMirrored
+                    case .left:
+                        self.orientation = UIImage.Orientation.left
+                    }
                 }
             }
             self.photoData = photo.fileDataRepresentation()
