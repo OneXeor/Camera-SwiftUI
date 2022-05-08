@@ -75,11 +75,7 @@ extension Photo {
     }
     public var image: UIImage? {
         guard let data = compressedData else { return nil }
-        if let img = UIImage(data: data) {
-            return UIImage.init(cgImage: img.cgImage!, scale: img.scale, orientation: orientation)
-        } else {
-            return UIImage()
-        }
+        return UIImage(data: data)
     }
 }
 
