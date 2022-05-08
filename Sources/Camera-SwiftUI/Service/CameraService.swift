@@ -101,7 +101,6 @@ public class CameraService: NSObject, Identifiable {
     public var thumbnailCompressionQuality: CGFloat = 0.5
     public var imageWidth: CGFloat = 800
     public var thumbnailWidth: CGFloat = 100
-    public var orientation: UIImage.Orientation = UIImage.Orientation.up
     
     // MARK: Session Management Properties
     public let session = AVCaptureSession()
@@ -555,7 +554,7 @@ public class CameraService: NSObject, Identifiable {
                             thumbnailCompressionQuality: self.thumbnailCompressionQuality,
                             imageWidth: self.imageWidth,
                             thumbnailWidth: self.thumbnailWidth,
-                            orintation: self.orientation
+                            orintation: photoCaptureProcessor.orientation
                         )
                         print("passing photo")
                     } else {
