@@ -7,12 +7,13 @@
 
 import Foundation
 import Photos
+import UIKit
 
 class PhotoCaptureProcessor: NSObject {
     private(set) var requestedPhotoSettings: AVCapturePhotoSettings
     
     private let willCapturePhotoAnimation: () -> Void
-        
+    
     lazy var context = CIContext()
     
     private let completionHandler: (PhotoCaptureProcessor) -> Void
@@ -20,9 +21,10 @@ class PhotoCaptureProcessor: NSObject {
     private let photoProcessingHandler: (Bool) -> Void
     
     var photoData: Data?
+    var orientation: UIImage.Orientation = UIImage.Orientation.up
     
     private var maxPhotoProcessingTime: CMTime?
-        
+    
     init(with requestedPhotoSettings: AVCapturePhotoSettings,
          willCapturePhotoAnimation: @escaping () -> Void,
          completionHandler: @escaping (PhotoCaptureProcessor) -> Void,
@@ -65,7 +67,6 @@ extension PhotoCaptureProcessor: AVCapturePhotoCaptureDelegate {
     
     /// - Tag: DidFinishProcessingPhoto
     func photoOutput(_ output: AVCapturePhotoOutput, didFinishProcessingPhoto photo: AVCapturePhoto, error: Error?) {
-        
         DispatchQueue.main.async {
             self.photoProcessingHandler(false)
         }
@@ -73,8 +74,12 @@ extension PhotoCaptureProcessor: AVCapturePhotoCaptureDelegate {
         if let error = error {
             print("Error capturing photo: \(error)")
         } else {
-            photoData = photo.fileDataRepresentation()
-
+            if let nOrientation = photo.metadata[kCGImagePropertyOrientation as String] as? NSNumber {
+                if let orientation = UIImage.Orientation(rawValue: nOrientation.intValue) {
+                    self.orientation = orientation
+                }
+            }
+            self.photoData = photo.fileDataRepresentation()
         }
     }
     
@@ -121,7 +126,7 @@ extension PhotoCaptureProcessor: AVCapturePhotoCaptureDelegate {
         DispatchQueue.main.async {
             self.completionHandler(self)
         }
-                    
-//        self.saveToPhotoLibrary(photoData)
+        
+        //        self.saveToPhotoLibrary(photoData)
     }
 }

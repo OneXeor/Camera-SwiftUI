@@ -16,6 +16,7 @@ import UIKit
 public struct Photo: Identifiable, Equatable {
     public var id: String
     public var originalData: Data
+    public var orintation: UIImage.Orientation
     public var imageCompressionQuality: CGFloat
     public var thumbnailCompressionQuality: CGFloat
     public var imageWidth: CGFloat
@@ -27,7 +28,8 @@ public struct Photo: Identifiable, Equatable {
         imageCompressionQuality: CGFloat = 1.0,
         thumbnailCompressionQuality: CGFloat = 0.5,
         imageWidth: CGFloat = 800,
-        thumbnailWidth: CGFloat = 100
+        thumbnailWidth: CGFloat = 100,
+        orintation: UIImage.Orientation = UIImage.Orientation.up
     ) {
         self.id = id
         self.originalData = originalData
@@ -35,6 +37,7 @@ public struct Photo: Identifiable, Equatable {
         self.thumbnailCompressionQuality = thumbnailCompressionQuality
         self.imageWidth = imageWidth
         self.thumbnailWidth = thumbnailWidth
+        self.orintation = orintation
     }
 }
 
@@ -94,10 +97,11 @@ public class CameraService: NSObject, Identifiable {
     public var alertError: AlertError = AlertError()
     
     // MARK: Photo settings
-    public var imageCompressionQuality: Float = 0.5
-    public var thumbnailCompressionQuality: Float = 0.5
-    public var imageWidth: Int = 800
-    public var thumbnailWidth: Int = 100
+    public var imageCompressionQuality: CGFloat = 0.5
+    public var thumbnailCompressionQuality: CGFloat = 0.5
+    public var imageWidth: CGFloat = 800
+    public var thumbnailWidth: CGFloat = 100
+    public var orientation: UIImage.Orientation = UIImage.Orientation.up
     
     // MARK: Session Management Properties
     public let session = AVCaptureSession()
@@ -542,9 +546,17 @@ public class CameraService: NSObject, Identifiable {
                         self.willCapturePhoto.toggle()
                     }
                 }, completionHandler: { (photoCaptureProcessor) in
+                    
                     // When the capture is complete, remove a reference to the photo capture delegate so it can be deallocated.
                     if let data = photoCaptureProcessor.photoData {
-                        self.photo = Photo(originalData: data)
+                        self.photo = Photo(
+                            originalData: data,
+                            imageCompressionQuality: self.imageCompressionQuality,
+                            thumbnailCompressionQuality: self.thumbnailCompressionQuality,
+                            imageWidth: self.imageWidth,
+                            thumbnailWidth: self.thumbnailWidth,
+                            orintation: self.orientation
+                        )
                         print("passing photo")
                     } else {
                         print("No photo data")
