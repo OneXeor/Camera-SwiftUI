@@ -16,18 +16,18 @@ import UIKit
 public struct Photo: Identifiable, Equatable {
     public var id: String
     public var originalData: Data
-    public var imageCompressionQuality: Float
-    public var thumbnailCompressionQuality: Float
-    public var imageWidth: Int
-    public var thumbnailWidth: Int
+    public var imageCompressionQuality: CGFloat
+    public var thumbnailCompressionQuality: CGFloat
+    public var imageWidth: CGFloat
+    public var thumbnailWidth: CGFloat
     
     public init(
         id: String = UUID().uuidString,
         originalData: Data,
-        imageCompressionQuality: Float = 1.0,
-        thumbnailCompressionQuality: Float = 0.5,
-        imageWidth: Int = 800,
-        thumbnailWidth: Int = 100,
+        imageCompressionQuality: CGFloat = 1.0,
+        thumbnailCompressionQuality: CGFloat = 0.5,
+        imageWidth: CGFloat = 800,
+        thumbnailWidth: CGFloat = 100
     ) {
         self.id = id
         self.originalData = originalData
